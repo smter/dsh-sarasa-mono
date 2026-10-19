@@ -1,0 +1,3 @@
+- insert:
+    - id: sarasa-mono
+      name: '@local/dsh-sarasa-mono'
