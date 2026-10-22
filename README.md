@@ -4,7 +4,8 @@ DeepSeek Harness (DSH) Web UI plugin: switches the UI fonts to Sarasa.
 
 - UI / body text: **Sarasa UI SC** (falls back to **更纱黑体 UI SC**, then the shipped stack)
 - Monospace surfaces (inline code, code blocks, ids): **Sarasa Mono SC**
-- Terminal: **Sarasa Mono SC** where the theme reads the role variable
+- Terminal: only through Settings (`terminalFontFamily`); xterm reads the theme
+  settings, not the CSS variable
 
 Requires the Sarasa fonts to be installed locally
 (https://github.com/be5invis/Sarasa-Gothic/releases). Note that the Windows release
@@ -41,11 +42,17 @@ body styles** (from Settings → font family fields):
 | code | `--dsh-font-family-code` | `codeFontFamily` |
 | terminal | `--dsh-font-family-terminal` | `terminalFontFamily` |
 
-An author `!important` declaration outranks an inline style, so this plugin declares
-those role variables on `html` with `!important`. A role the user already pinned in
-Settings is skipped, and the sheet re-syncs when the body style changes, so a user
-choice keeps winning.
+While a role is unpinned that variable has no declaration on `body`, so a rule on
+`html` inherits into it and the composition above resolves to Sarasa. A value the user
+pinned is an inline style on `body`: no `html` rule can shadow it (different element,
+so `!important` does not help), therefore a pinned role is skipped instead of
+overridden, and the sheet re-syncs when the body style changes. `!important` is kept
+only as defence against other `html`-level rules.
 
-`--dsw-font-mono` is also overridden: it is consumed with a fallback by a few plugin
-surfaces (jobs, plugin manager, agent preset, document preview) and is defined
-nowhere else.
+The terminal (`xterm`) face is not driven by CSS at all: it reads
+`theme.fontFamilies.terminal`, so `--dsh-font-family-terminal` alone does not reach it.
+Set the terminal font in Settings for that surface.
+
+`--dsw-font-mono` is also overridden: it is consumed by a few plugin surfaces (jobs,
+plugin manager, agent preset, document preview) and defined nowhere else. One of those
+consumers has no fallback of its own, so the value always ends with a generic family.

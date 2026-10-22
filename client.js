@@ -9,13 +9,17 @@
  *          --ds-font-family-code: var(--dsh-font-family-code, …), …; }
  *   body { font-family: var( --dsw-font-family, …) }
  *
- * Because <body> redeclares those composed names itself, a :root override never
- * reaches <body> or any descendant. The real knobs are the role variables
- * --dsh-font-family-text|code|terminal, and the layout ThemePresenter writes the
- * user's lists into them as INLINE body styles, so a plain author rule loses.
- * Author '!important' outranks inline styles, so that is what we use, and only for
- * roles the user has not already customized in Settings — their choice keeps
- * winning, and the style re-syncs when the body style changes.
+ * Because <body> redeclares those composed names itself, a :root override of
+ * --dsw-font-family never reaches <body> or any descendant.
+ *
+ * The real knobs are the role variables --dsh-font-family-text|code|terminal. The
+ * layout ThemePresenter writes a role only when the user set a font in Settings, as
+ * an INLINE body style. While a role is unpinned that variable has no declaration on
+ * <body>, so a stylesheet rule on <html> inherits into it and the composition above
+ * picks it up. A pinned value cannot be shadowed from <html> — that is a different
+ * element, so '!important' does not help there — which is why pinned roles are
+ * skipped here instead of overridden. '!important' below only outranks other
+ * <html>-level rules; it is defensive, not the mechanism.
  */
 window.__ModuleLoader__.load({
   id: '@local/dsh-sarasa-mono',
